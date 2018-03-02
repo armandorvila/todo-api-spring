@@ -1,5 +1,5 @@
 # TODO API Spring Framework
-Small project ot implement a REST TODO API on top of JAva 8 and Spring Framework 5.
+Small project that implements a REST TODO API on top of JAva 8 and Spring Framework 5.
 
 # Feature list
 
