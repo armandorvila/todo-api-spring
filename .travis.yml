@@ -4,3 +4,9 @@ sudo: false
 script: mvn clean verify
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+  - docker login --username $DOCKER_HUB_USERNAME --password $DOCKER_HUB_PASSWORD
+  - export REPO=armandorvila/todo-api-spring
+  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+  - docker build -q -f Dockerfile -t $REPO:$COMMIT .
+  - docker tag $REPO:$COMMIT $REPO:$TAG
+  - docker push $REPO
