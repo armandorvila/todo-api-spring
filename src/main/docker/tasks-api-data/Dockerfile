@@ -1,4 +1,4 @@
-FROM mongo
+FROM mongo:3.6
 
 MAINTAINER armando.ramirez.vila@gmail.com
 
