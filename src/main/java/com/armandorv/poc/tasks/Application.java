@@ -1,4 +1,4 @@
-package com.armandorv.poc.todo;
+package com.armandorv.poc.tasks;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

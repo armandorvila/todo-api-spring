@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.armandorv.poc</groupId>
-	<artifactId>todo-api-spring</artifactId>
+	<artifactId>tasks-api-spring</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>todo-api-spring</name>
+	<name>tasks-api-spring</name>
 	<description>Small project that implements a REST TODO API on top of JAva 8 and Spring Framework 5.</description>
 
 	<parent>
@@ -41,6 +41,7 @@
 			<groupId>io.netty</groupId>
 			<artifactId>netty-all</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb-reactive</artifactId>
@@ -84,7 +85,7 @@
 				<version>0.8.0</version>
 				<configuration>
 					<excludes>
-						<exclude>com/armandorv/poc/todo/domain/**/*</exclude>
+						<exclude>**/*Config.*</exclude>
 						<exclude>**/*Application.*</exclude>
 					</excludes>
 				</configuration>
@@ -158,42 +159,4 @@
 			</plugin>
 		</plugins>
 	</reporting>
-
-	<repositories>
-		<repository>
-			<id>spring-snapshots</id>
-			<name>Spring Snapshots</name>
-			<url>https://repo.spring.io/snapshot</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>spring-milestones</id>
-			<name>Spring Milestones</name>
-			<url>https://repo.spring.io/milestone</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>spring-snapshots</id>
-			<name>Spring Snapshots</name>
-			<url>https://repo.spring.io/snapshot</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-		<pluginRepository>
-			<id>spring-milestones</id>
-			<name>Spring Milestones</name>
-			<url>https://repo.spring.io/milestone</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
 </project>

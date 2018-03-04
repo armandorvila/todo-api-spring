@@ -1,4 +1,4 @@
-package com.armandorv.poc.todo.resource;
+package com.armandorv.poc.tasks.resource;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -9,8 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import com.armandorv.poc.todo.domain.Task;
-import com.armandorv.poc.todo.repository.TaskRepository;
+import com.armandorv.poc.tasks.domain.Task;
+import com.armandorv.poc.tasks.repository.TaskRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -22,12 +22,12 @@ public class TaskResourceTests {
 	@Autowired
 	private TaskRepository taskRepository;
 
-	private Task task;
+	private Task task = new Task("Research blokchain applications.");
 	
 	@Before
 	public void setUp() {
 		this.taskRepository.deleteAll().block();
-		this.task = taskRepository.save(new Task("Research blokchain applications.")).block();
+		this.task = taskRepository.save(task).block();
 	}
 
 	@Test

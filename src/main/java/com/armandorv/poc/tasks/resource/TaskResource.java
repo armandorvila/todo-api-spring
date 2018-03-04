@@ -1,12 +1,12 @@
-package com.armandorv.poc.todo.resource;
+package com.armandorv.poc.tasks.resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.armandorv.poc.todo.domain.Task;
-import com.armandorv.poc.todo.repository.TaskRepository;
+import com.armandorv.poc.tasks.domain.Task;
+import com.armandorv.poc.tasks.repository.TaskRepository;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -18,12 +18,12 @@ public class TaskResource {
 	private TaskRepository taskRepository;
 	
 	@GetMapping("/tasks")
-	Flux<Task> listTasks() {
+	public Flux<Task> listTasks() {
 		return taskRepository.findAll();
 	}
 	
 	@GetMapping("/tasks/{id}")
-	Mono<Task> getTask(@PathVariable("id") String id) {
+	public Mono<Task> getTask(@PathVariable("id") String id) {
 		return taskRepository.findById(id);
 	}
 }

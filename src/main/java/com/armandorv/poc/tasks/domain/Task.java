@@ -1,4 +1,4 @@
-package com.armandorv.poc.todo.domain;
+package com.armandorv.poc.tasks.domain;
 
 import java.time.Instant;
 

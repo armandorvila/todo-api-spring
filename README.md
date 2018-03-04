@@ -20,3 +20,5 @@ Small project that implements a REST TODO API on top of JAva 8 and Spring Framew
 [![Build Status](https://secure.travis-ci.org/armandorvila/todo-api-spring.png)](http://travis-ci.org/armandorvila/todo-api-spring) 
 
 [![codecov.io](https://codecov.io/github/armandorvila/todo-api-spring/coverage.svg)](https://codecov.io/github/armandorvila/todo-api-spring)
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/62c434b415f444e48bbed29f83b57a1f)](https://www.codacy.com/app/armandorvila/todo-api-spring?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=armandorvila/todo-api-spring&amp;utm_campaign=Badge_Grade)
