@@ -22,7 +22,7 @@ import lombok.Getter;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public abstract class IntegrationTestSupport {
+public abstract class AbstractResourceTest {
 	
 	@Autowired
 	private TaskRepository taskRepository;

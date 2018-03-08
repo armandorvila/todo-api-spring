@@ -8,11 +8,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import com.armandorv.poc.tasks.IntegrationTestSupport;
+import com.armandorv.poc.tasks.AbstractResourceTest;
 import com.armandorv.poc.tasks.domain.User;
 
 @RunWith(SpringRunner.class)
-public class UserResourceTests extends IntegrationTestSupport{
+public class UserResourceTests extends AbstractResourceTest {
 
 	@Autowired
 	private WebTestClient webClient;
