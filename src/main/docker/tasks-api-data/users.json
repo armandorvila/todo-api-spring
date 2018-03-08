@@ -1,0 +1,14 @@
+[
+	{ 
+	    "_id" : "6fbe2532-395e-4829-97d3-631dd61e60eg", 
+	    "email" : "some.user@gmail.com",
+	    "firstName" : "Some",
+	    "lastName" : "User"
+	},
+	{
+	    "_id" : "6fbe2532-395e-4829-97d3-631dd61e60ek", 
+	     "email" : "just.another.user@gmail.com",
+	    "firstName" : "Just another",
+	    "lastName" : "User"
+	}
+]

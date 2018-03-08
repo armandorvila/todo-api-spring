@@ -41,7 +41,7 @@ public class TaskRepositoryTests {
 		Iterable<Task> tasks = taskRepository.findAll().toIterable();
 		
 		assertThat(tasks).hasSize(1);
-		assertThat(tasks).contains(task);
+		assertThat(tasks).contains(this.task);
 	}
 
 }

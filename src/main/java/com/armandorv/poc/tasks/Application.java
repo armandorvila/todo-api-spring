@@ -2,12 +2,14 @@ package com.armandorv.poc.tasks;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.mongodb.config.EnableMongoAuditing;
-import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.web.reactive.config.EnableWebFlux;
+
+import com.armandorv.poc.tasks.config.ApplicationProperties;
 
 @SpringBootApplication
-@EnableMongoAuditing
-@EnableReactiveMongoRepositories
+@EnableWebFlux
+@EnableConfigurationProperties(ApplicationProperties.class)
 public class Application {
 
 	public static void main(String[] args) {
