@@ -19,6 +19,8 @@ import com.armandorv.poc.tasks.repository.UserRepository;
 import com.armandorv.poc.tasks.resource.dto.UserTokenDTO;
 
 import lombok.Getter;
+import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -34,27 +36,31 @@ public abstract class AbstractResourceTest {
 	@Autowired
 	private WebTestClient webClient;
 	
-	@Getter
-	private List<Task> tasks;
+	private Flux<Task> tasks;
 	
-	@Getter
-	private List<User> users;
+	private Flux<User> users;
 	
 	private UserTokenDTO token;
 
 	@Before
-	public void setUp() {
-		this.taskRepository.deleteAll().block();
-		this.userRepository.deleteAll().block();
-
-		this.tasks = taskRepository.saveAll(
-				asList(new Task("Research blokchain applications."), 
-						new Task("Call mom...."),
-						new Task("Prepare PoC"))).collectList().block();
+	public void loadTasks() {
+		tasks = this.taskRepository.deleteAll()
+				.thenMany(taskRepository.saveAll(asList(
+						new Task("Research blokchain applications."),
+						new Task("Implemnet simple trading system."),
+						new Task("Prepare PoC"))));
 		
-		this.users = userRepository.saveAll(
-				asList(new User("user.some@gmail.com", "User", "Some", "secret"),
-					   new User("user.other@gmail.com", "User", "Other", "secret"))).collectList().block();
+		StepVerifier.create(tasks).expectNextCount(3).verifyComplete();
+	}
+	
+	@Before
+	public void loadUsers() {		
+		users = this.userRepository.deleteAll()
+				.thenMany(userRepository.saveAll(asList(
+						   new User("user.some@gmail.com", "User", "Some", "secret"),
+						   new User("user.other@gmail.com", "User", "Other", "secret"))));
+		
+		StepVerifier.create(users).expectNextCount(2).verifyComplete();
 	}
 	
 	public String authorization() throws Exception {
@@ -62,13 +68,24 @@ public abstract class AbstractResourceTest {
 			token = webClient.post().uri("/authenticate")
 					.contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON)
-					.syncBody(users.get(0))
+					.syncBody(loggedUser())
 					.exchange()
 					.expectStatus().isOk()
 					.expectBody(UserTokenDTO.class)
 					.returnResult().getResponseBody();
 		}
-
 		return String.format("Bearer %s", token.getToken());
+	}
+	
+	public User loggedUser() {
+		return this.users.blockFirst();
+	}
+	
+	public List<User> getUsers() {
+		return this.users.collectList().block();
+	}
+	
+	public List<Task> getTasks() {
+		return this.tasks.collectList().block();
 	}
 }

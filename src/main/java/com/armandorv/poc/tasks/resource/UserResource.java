@@ -28,7 +28,7 @@ public class UserResource {
     @PostMapping("/users/signup")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<@Valid User> createUser(@Valid @RequestBody User user) {
-    	return userRepository.save(user);
+    	return userRepository.save(user).log();
     }
     
     @GetMapping("/users/me")

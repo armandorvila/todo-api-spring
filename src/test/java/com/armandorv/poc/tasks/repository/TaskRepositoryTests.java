@@ -1,47 +1,67 @@
 package com.armandorv.poc.tasks.repository;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.armandorv.poc.tasks.domain.Task;
-import com.armandorv.poc.tasks.repository.TaskRepository;
+
+import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@DataMongoTest
 public class TaskRepositoryTests {
 
 	@Autowired
 	private TaskRepository taskRepository;
-
-	private Task task = new Task("Research blokchain applications.");
+	
+	private Flux<Task> tasks;
 	
 	@Before
 	public void setUp() {
-		this.taskRepository.deleteAll().block();
-		this.task = taskRepository.save(task).block();
+		tasks = this.taskRepository.deleteAll()
+				.thenMany(taskRepository.saveAll(asList(
+						new Task("Research blokchain applications."),
+						new Task("Implemnet simple trading system."))));
+		
+		StepVerifier.create(tasks).expectNextCount(2).verifyComplete();
 	}
 	
 	@Test
-	public void testFindOne() {
-		Task task = taskRepository.findById(this.task.getId()).block();
-		
-		assertThat(task).isNotNull();
-		assertThat(task).hasFieldOrPropertyWithValue("id", this.task.getId());
-		assertThat(task).hasFieldOrPropertyWithValue("summary", this.task.getSummary());
+	public void shouldGetAllTheTasks() {
+		StepVerifier.create(taskRepository.findAll())
+		.expectNextCount(2)
+		.verifyComplete();
 	}
 	
 	@Test
-	public void testFindAll() {
-		Iterable<Task> tasks = taskRepository.findAll().toIterable();
+	public void shouldGetTaskById() {
+		final Task task = tasks.blockFirst();
 		
-		assertThat(tasks).hasSize(1);
-		assertThat(tasks).contains(this.task);
+		StepVerifier.create(taskRepository.findById(task.getId()))
+		.expectNext(task)
+		.verifyComplete();
+	}
+	
+	@Test
+	public void shouldCreateTask() {
+		final Task task = new Task("Some pointless task");
+		
+		StepVerifier.create(taskRepository.save(task))
+		
+		.assertNext(result -> assertThat(result).isNotNull())
+		.assertNext(result -> assertThat(result.getId()).isNotNull())
+		.assertNext(result -> assertThat(result.getCreatedAt()).isNotNull())
+		.assertNext(result -> assertThat(result.getLastModifiedAt()).isNotNull())
+		
+		.assertNext(result -> assertThat(result.getSummary()).isEqualTo(task.getSummary()));
 	}
 
 }

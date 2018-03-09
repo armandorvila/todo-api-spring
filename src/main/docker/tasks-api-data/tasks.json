@@ -1,10 +1,14 @@
 [
 	{ 
 	    "_id" : "6fbe2532-395e-4829-97d3-631dd61e60eb", 
-	    "summary" : "Research blockchain alternatives"
+	    "summary" : "Research blockchain alternatives",
+	    "createdAt" : "2018-03-09T18:59:15.055Z",
+    	"lastModifiedAt" : "2018-03-09T18:59:15.055Z"
 	},
 	{
 	    "_id" : "6fbe2532-395e-4829-97d3-631dd61e60ef", 
-	    "summary" : "Research blockchain for media"
+	    "summary" : "Research blockchain for media",
+	    "createdAt" : "2018-03-09T18:59:15.055Z",
+    	"lastModifiedAt" : "2018-03-09T18:59:15.055Z"
 	}
 ]

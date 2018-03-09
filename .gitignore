@@ -10,3 +10,5 @@
 .settings
 .project
 target
+.factorypath
+.springBeans

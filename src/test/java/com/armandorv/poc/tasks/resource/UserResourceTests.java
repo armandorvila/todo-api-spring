@@ -18,15 +18,21 @@ public class UserResourceTests extends AbstractResourceTest {
 	private WebTestClient webClient;
 
 	@Test
-	public void clientGetsCurrentUser_Authorized() throws Exception {
+	public void clientGetsCurrentUser_Authorized() throws Exception {		
+		final User result =  webClient.get().uri("/users/me")
+						.accept(MediaType.APPLICATION_JSON)
+						.header("Authorization", authorization())
+						.exchange()
+						.expectStatus().isOk()
+						.expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+						.expectBody(User.class)
+				        .returnResult()
+				        .getResponseBody();
 		
-		webClient.get().uri("/users/me")
-					.accept(MediaType.APPLICATION_JSON)
-					.header("Authorization", authorization())
-					.exchange()
-					.expectStatus().isOk()
-					.expectBody(User.class)
-			        .isEqualTo(getUsers().get(0));
+		assertThat(result.getId()).isEqualTo(loggedUser().getId());
+		assertThat(result.getEmail()).isEqualTo(loggedUser().getEmail());
+		assertThat(result.getFirstName()).isEqualTo(loggedUser().getFirstName());
+		assertThat(result.getLastName()).isEqualTo(loggedUser().getLastName());
 	}
 	
 	@Test
@@ -39,19 +45,21 @@ public class UserResourceTests extends AbstractResourceTest {
 	
 	@Test
 	public void clientSingsUp() throws Exception {
-		final User user = new User("new.user@gmail.com", "New", "User");
+		final User user = new User("new.user@gmail.com", "New", "User", "secret");
 		
 		final User result = webClient.post().uri("/users/signup")
 								.accept(MediaType.APPLICATION_JSON)
 								.syncBody(user)
 								.exchange()
 								.expectStatus().isCreated()
+								.expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
 								.expectBody(User.class)
 								.returnResult()
 								.getResponseBody();
 		
 		assertThat(result.getId()).isNotNull();
-		
+		assertThat(result.getCreatedAt()).isNotNull();
+		assertThat(result.getLastModifiedAt()).isNotNull();
 		assertThat(result.getEmail()).isEqualTo(user.getEmail());
 		assertThat(result.getFirstName()).isEqualTo(user.getFirstName());
 		assertThat(result.getLastName()).isEqualTo(user.getLastName());

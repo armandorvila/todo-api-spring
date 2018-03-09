@@ -1,48 +1,77 @@
 package com.armandorv.poc.tasks.repository;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.armandorv.poc.tasks.domain.User;
 
+import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
+
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@DataMongoTest
 public class UserRepositoryTests {
 
 	@Autowired
 	private UserRepository userRepository;
 
-	private User user = new User("user@gmail.com", "Some", "User");
+	private Flux<User> users;
 	
 	@Before
 	public void setUp() {
-		this.userRepository.deleteAll().block();
-		this.user = userRepository.save(user).block();
+		users = this.userRepository.deleteAll()
+				.thenMany(userRepository.saveAll(asList(
+						   new User("user.some@gmail.com", "User", "Some", "secret"),
+						   new User("user.other@gmail.com", "User", "Other", "secret"))));
+		
+		StepVerifier.create(users).expectNextCount(2).verifyComplete();
 	}
 	
 	@Test
-	public void testFindOne() {
-		User task = userRepository.findById(this.user.getId()).block();
-		
-		assertThat(task).isNotNull();
-		assertThat(task).hasFieldOrPropertyWithValue("id", this.user.getId());
-		assertThat(task).hasFieldOrPropertyWithValue("email", this.user.getEmail());
-		assertThat(task).hasFieldOrPropertyWithValue("firstName", this.user.getFirstName());
-		assertThat(task).hasFieldOrPropertyWithValue("lastName", this.user.getLastName());
+	public void shouldGetAllTheUsers() {
+		StepVerifier.create(userRepository.findAll())
+		.expectNextCount(2)
+		.verifyComplete();
 	}
 	
 	@Test
-	public void testFindAll() {
-		Iterable<User> users = userRepository.findAll().toIterable();
+	public void shouldGetUserById() {
+		final User user = users.blockFirst();
 		
-		assertThat(users).hasSize(1);
-		assertThat(users).contains(this.user);
+		StepVerifier.create(userRepository.findById(user.getId()))
+		.expectNext(user)
+		.verifyComplete();
+	}
+	
+	@Test
+	public void shouldGetUserByEmailIgnoreCase() {
+		final User user = users.blockFirst();
+		
+		StepVerifier.create(userRepository.findByEmailIgnoreCase(user.getEmail().toUpperCase()))
+		.expectNext(user)
+		.verifyComplete();
 	}
 
+	@Test
+	public void shouldCreateUser() {
+		final User user = new User("some.new.user@gmail.com", "Some", "New user", "secret");
+		
+		StepVerifier.create(userRepository.save(user))
+		
+		.assertNext(result -> assertThat(result).isNotNull())
+		.assertNext(result -> assertThat(result.getId()).isNotNull())
+		.assertNext(result -> assertThat(result.getCreatedAt()).isNotNull())
+		.assertNext(result -> assertThat(result.getLastModifiedAt()).isNotNull())
+		
+		.assertNext(result -> assertThat(result.getEmail()).isEqualTo(user.getEmail()))
+		.assertNext(result -> assertThat(result.getFirstName()).isEqualTo(user.getFirstName()))
+		.assertNext(result -> assertThat(result.getLastName()).isEqualTo(user.getLastName()));
+	}
 }

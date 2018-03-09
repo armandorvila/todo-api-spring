@@ -1,5 +1,9 @@
 package com.armandorv.poc.tasks.resource;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +22,20 @@ public class TaskResourceTests extends AbstractResourceTest{
 
 	@Test
 	public void clientGetsListOfTasks_Authorized() throws Exception {
-		webClient.get().uri("/tasks")
+		List<Task> tasks = webClient.get().uri("/tasks")
 					.accept(MediaType.APPLICATION_JSON)
 					.header("Authorization", authorization())
 					.exchange()
 					.expectStatus().isOk()
+					.expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
 					.expectBodyList(Task.class)
 					.hasSize(getTasks().size())
-					.contains(getTasks().get(0));
+					.returnResult()
+					.getResponseBody();
+		
+		assertThat(tasks.get(0).getId()).isEqualTo(getTasks().get(0).getId());
+		assertThat(tasks.get(0).getSummary()).isEqualTo(getTasks().get(0).getSummary());
+		assertThat(tasks.get(0).getCreatedAt()).isEqualTo(getTasks().get(0).getCreatedAt());
 	}
 	
 	@Test
@@ -33,7 +43,8 @@ public class TaskResourceTests extends AbstractResourceTest{
 		webClient.get().uri("/tasks")
 					.accept(MediaType.APPLICATION_JSON)
 					.exchange()
-					.expectStatus().isUnauthorized();
+					.expectStatus().isUnauthorized()
+					.expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8);
 	}
 
 	@Test
@@ -45,6 +56,7 @@ public class TaskResourceTests extends AbstractResourceTest{
 						.header("Authorization", authorization())
 		                .exchange()
 				        .expectStatus().isOk()
+				        .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
 				        .expectBody(Task.class)
 				        .isEqualTo(task);
 	}
