@@ -16,6 +16,7 @@ import com.armandorv.poc.tasks.domain.User;
 import com.armandorv.poc.tasks.repository.UserRepository;
 
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @RestController
 public class UserResource {
@@ -34,6 +35,7 @@ public class UserResource {
     public Mono<@Valid User> createUser(@Valid @RequestBody User user) {
     	
     	return Mono.just(user)
+    			   .subscribeOn(Schedulers.parallel())
 				   .doOnNext(u -> u.setPassword(this.encoder.encode(u.getPassword())))
 				   .flatMap(this.userRepository::save);
     }

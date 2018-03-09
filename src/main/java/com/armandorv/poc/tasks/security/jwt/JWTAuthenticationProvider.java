@@ -1,11 +1,10 @@
 package com.armandorv.poc.tasks.security.jwt;
 
-import static java.time.temporal.ChronoUnit.MILLIS;
-
-import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,33 +30,34 @@ public class JWTAuthenticationProvider {
 	private static final String AUTHORITIES_KEY = "auth";
 
 	private ApplicationProperties properties;
+	
+    private String secretKey;
+
+    private long tokenValidityInMilliseconds;
 
 	public JWTAuthenticationProvider(ApplicationProperties properties) {
 		this.properties = properties;
 	}
 	
-	private String getTokenSecret() {
-		return properties.getSecurity().getJwt().getSecret();
-	}
-
-	private Date getTokenValidity() {
-		final long tokenValidityInSeconds = properties.getSecurity().getJwt().getTokenValidityInSeconds();
-		final Instant validity = Instant.now().plus(tokenValidityInSeconds, MILLIS);
-
-		return Date.from(validity);
-	}
+    @PostConstruct
+    public void init() {
+        this.secretKey = properties.getSecurity().getJwt().getSecret();
+        this.tokenValidityInMilliseconds = 1000 * properties.getSecurity().getJwt().getTokenValidityInSeconds();
+    }
 
 	public String toToken(Authentication authentication) {
 		String authorities = authentication.getAuthorities().stream()
 				.map(a -> a.getAuthority()
 				.replaceAll("ROLE_", ""))
 				.collect(Collectors.joining(","));
+		
+		 Date validity = new Date(new Date().getTime() + this.tokenValidityInMilliseconds);
 
 		return Jwts.builder()
 				.setSubject(authentication.getName())
 				.claim(AUTHORITIES_KEY, authorities)
-				.signWith(SignatureAlgorithm.HS512, getTokenSecret())
-				.setExpiration(getTokenValidity()).compact();
+				.signWith(SignatureAlgorithm.HS512, this.secretKey)
+				.setExpiration(validity).compact();
 	}
 
 	public Optional<Authentication> toAuthentication(String token) {
@@ -66,7 +66,7 @@ public class JWTAuthenticationProvider {
 		}
 
 		Claims claims = Jwts.parser()
-				.setSigningKey(getTokenSecret())
+				.setSigningKey(this.secretKey)
 				.parseClaimsJws(token)
 				.getBody();
 
@@ -88,7 +88,7 @@ public class JWTAuthenticationProvider {
 			return false;
 		}
 		try {
-			Jwts.parser().setSigningKey(getTokenSecret()).parseClaimsJws(authToken);
+			Jwts.parser().setSigningKey(this.secretKey).parseClaimsJws(authToken);
 			return true;
 		} catch (SignatureException e) {
 			log.info("Invalid JWT signature.");
