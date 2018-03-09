@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.armandorv.poc.tasks.domain.User;
+import com.armandorv.poc.tasks.resource.dto.UserCredentialsDTO;
 import com.armandorv.poc.tasks.resource.dto.UserTokenDTO;
 import com.armandorv.poc.tasks.security.jwt.JWTAuthenticationProvider;
 
@@ -33,10 +33,10 @@ public class UserTokenResource {
 	}
 	
     @PostMapping("/authenticate")
-    public Mono<UserTokenDTO> authenticate(ServerWebExchange exchange, @Valid @RequestBody User user) {
+    public Mono<UserTokenDTO> authenticate(ServerWebExchange exchange, @Valid @RequestBody UserCredentialsDTO credentials) {
 
         UsernamePasswordAuthenticationToken authentication =
-            new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
+            new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword());
 
         return authenticationManager
         		.authenticate(authentication)

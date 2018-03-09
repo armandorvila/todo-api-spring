@@ -16,6 +16,7 @@ import com.armandorv.poc.tasks.domain.Task;
 import com.armandorv.poc.tasks.domain.User;
 import com.armandorv.poc.tasks.repository.TaskRepository;
 import com.armandorv.poc.tasks.repository.UserRepository;
+import com.armandorv.poc.tasks.resource.dto.UserCredentialsDTO;
 import com.armandorv.poc.tasks.resource.dto.UserTokenDTO;
 
 import lombok.Getter;
@@ -25,6 +26,8 @@ import reactor.test.StepVerifier;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class AbstractResourceTest {
+	
+	private static final String PASSWORD = "{bcrypt}$2a$10$CI1Eqs4PNuldiV7SkHoaQ.vFaIOUf1IZhcuYkKRcThJK.Nkjc5ZIG";
 	
 	@Autowired
 	private TaskRepository taskRepository;
@@ -57,8 +60,8 @@ public abstract class AbstractResourceTest {
 	public void loadUsers() {		
 		users = this.userRepository.deleteAll()
 				.thenMany(userRepository.saveAll(asList(
-						   new User("user.some@gmail.com", "User", "Some", "secret"),
-						   new User("user.other@gmail.com", "User", "Other", "secret"))));
+						   new User("user.some@gmail.com", "User", "Some", PASSWORD),
+						   new User("user.other@gmail.com", "User", "Other", PASSWORD))));
 		
 		StepVerifier.create(users).expectNextCount(2).verifyComplete();
 	}
@@ -68,13 +71,17 @@ public abstract class AbstractResourceTest {
 			token = webClient.post().uri("/authenticate")
 					.contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON)
-					.syncBody(loggedUser())
+					.syncBody(userCredentials())
 					.exchange()
 					.expectStatus().isOk()
 					.expectBody(UserTokenDTO.class)
 					.returnResult().getResponseBody();
 		}
 		return String.format("Bearer %s", token.getToken());
+	}
+	
+	public UserCredentialsDTO userCredentials() {
+		return new UserCredentialsDTO("user.some@gmail.com", "secret");
 	}
 	
 	public User loggedUser() {

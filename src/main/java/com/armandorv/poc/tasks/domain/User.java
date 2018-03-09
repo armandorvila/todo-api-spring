@@ -2,8 +2,7 @@ package com.armandorv.poc.tasks.domain;
 
 import java.time.Instant;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -26,17 +25,17 @@ public class User {
 	@Id
 	private String id;
 	
-	@NotNull
-	@Email
 	@Indexed(unique = true)
+	@NotEmpty(message = "This field is required")
 	private String email;
 
-	@NotNull
+	@NotEmpty(message = "This field is required")
 	private String firstName;
 
-	@NotNull
+	@NotEmpty(message = "This field is required")
 	private String lastName;
 	
+	@NotEmpty(message = "This field is required")
 	private String password;
 
 	@CreatedDate

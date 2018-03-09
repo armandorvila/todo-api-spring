@@ -5,6 +5,7 @@ import java.security.Principal;
 import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,15 +21,21 @@ import reactor.core.publisher.Mono;
 public class UserResource {
 	
 	private UserRepository userRepository;
+	
+	private PasswordEncoder encoder;
 
-	public UserResource(UserRepository userRepository) {
+	public UserResource(UserRepository userRepository, PasswordEncoder encoder) {
 		this.userRepository = userRepository;
+		this.encoder = encoder;
 	}
 	
     @PostMapping("/users/signup")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<@Valid User> createUser(@Valid @RequestBody User user) {
-    	return userRepository.save(user).log();
+    	
+    	return Mono.just(user)
+				   .doOnNext(u -> u.setPassword(this.encoder.encode(u.getPassword())))
+				   .flatMap(this.userRepository::save);
     }
     
     @GetMapping("/users/me")

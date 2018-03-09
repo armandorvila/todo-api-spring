@@ -6,7 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import com.armandorv.poc.tasks.AbstractResourceTest;
-import com.armandorv.poc.tasks.domain.User;
+import com.armandorv.poc.tasks.resource.dto.UserCredentialsDTO;
 
 public class UserTokenResourceTests extends AbstractResourceTest { 
 
@@ -15,11 +15,10 @@ public class UserTokenResourceTests extends AbstractResourceTest {
 	
 	@Test
 	public void clientGetsToken_ValidCredentials() throws Exception {
-		final User user = getUsers().get(0);
 		
 		webClient.post().uri("/authenticate")
 					.accept(MediaType.APPLICATION_JSON)
-					.syncBody(user)
+					.syncBody(userCredentials())
 					.exchange()
 					.expectStatus().isOk()
 					.expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -30,11 +29,11 @@ public class UserTokenResourceTests extends AbstractResourceTest {
 	
 	@Test
 	public void clientGetsToken_InvalidCredentials() throws Exception {
-		final User user = new User("someinvalidemail@gmail.com", "some", "user");
+		final UserCredentialsDTO credentials = new UserCredentialsDTO("someinvalidemail@gmail.com", "secret");
 		
 		webClient.post().uri("/authenticate")
 					.accept(MediaType.APPLICATION_JSON)
-					.syncBody(user)
+					.syncBody(credentials)
 					.exchange()
 					.expectStatus().isUnauthorized()
 					.expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8);

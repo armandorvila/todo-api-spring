@@ -2,6 +2,8 @@ package com.armandorv.poc.tasks.domain;
 
 import java.time.Instant;
 
+import javax.validation.constraints.NotEmpty;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -20,6 +22,7 @@ public class Task {
 	@Id
 	private String id;
 
+	@NotEmpty(message = "This field is required")
 	private String summary;
 	
 	@CreatedDate
