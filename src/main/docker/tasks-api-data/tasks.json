@@ -1,14 +1,14 @@
 [
 	{ 
-	    "_id" : "6fbe2532-395e-4829-97d3-631dd61e60eb", 
+	    "_id" : ObjectId("57f4dadc6d138cf005711f4d"), 
 	    "summary" : "Research blockchain alternatives",
-	    "createdAt" : "2018-03-09T18:59:15.055Z",
-    	"lastModifiedAt" : "2018-03-09T18:59:15.055Z"
+	    "createdAt" : ISODate("2018-03-09T18:59:15.055Z"),
+    	"lastModifiedAt" : ISODate("2018-03-09T18:59:15.055Z")
 	},
 	{
-	    "_id" : "6fbe2532-395e-4829-97d3-631dd61e60ef", 
+	    "_id" : ObjectId("57f4dadc6d138cf005711f4e"), 
 	    "summary" : "Research blockchain for media",
-	    "createdAt" : "2018-03-09T18:59:15.055Z",
-    	"lastModifiedAt" : "2018-03-09T18:59:15.055Z"
+	    "createdAt" : ISODate("2018-03-09T18:59:15.055Z"),
+    	"lastModifiedAt" : ISODate("2018-03-09T18:59:15.055Z")
 	}
 ]

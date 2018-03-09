@@ -9,7 +9,6 @@ services:
         - 27017:27017
     command: mongod --smallfiles --logpath=/dev/null
 
-  
   tasks-api-data:
     container_name: tasks-api-data
     image: armandorvila/tasks-api-data
@@ -18,7 +17,7 @@ services:
       dockerfile: ./src/main/docker/tasks-api-data/Dockerfile
     depends_on:
       - tasks-api-mongo
-
+      
   
   tasks-api-spring:
     container_name: tasks-api-spring
