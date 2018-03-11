@@ -1,7 +1,6 @@
 package com.armandorv.poc.tasks.security.jwt;
 
 import java.util.Date;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -61,11 +60,7 @@ public class JWTAuthenticationProvider {
 				.setExpiration(validity).compact();
 	}
 
-	public Optional<Authentication> toAuthentication(String token) {
-		if (!validateToken(token)) {
-			Mono.empty();
-		}
-
+	public Mono<Authentication> getAuthentication(String token) {
 		Claims claims = Jwts.parser()
 				.setSigningKey(this.secretKey)
 				.parseClaimsJws(token)
@@ -78,11 +73,11 @@ public class JWTAuthenticationProvider {
 				.password("").roles(authorities)
 				.build();
 
-		return Optional.of(new UsernamePasswordAuthenticationToken(principal, token,
+		return Mono.just(new UsernamePasswordAuthenticationToken(principal, token, 
 				principal.getAuthorities()));
 	}
 
-	private boolean validateToken(String authToken) {
+	public boolean validateToken(String authToken) {
 		if (!StringUtils.hasText(authToken)) {
 			return false;
 		}

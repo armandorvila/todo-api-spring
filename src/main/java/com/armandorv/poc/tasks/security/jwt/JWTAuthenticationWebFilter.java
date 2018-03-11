@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -28,32 +27,40 @@ public class JWTAuthenticationWebFilter implements WebFilter {
 
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-		String jwToken = getTokenFromHeader(exchange.getRequest());
 		
-		if(jwToken == null) {
+		Optional<String> jwToken = getTokenFromHeader(exchange.getRequest());
+		
+		if(!jwToken.isPresent()) {
 			return chain.filter(exchange);
 		}
 		
-		return Mono.just(jwToken).publishOn(Schedulers.parallel())
-		   .map(jwtAuthenticationProvider::toAuthentication)
-		   .filter(Optional::isPresent).map(Optional::get)
-		   .flatMap(auth -> chain.filter(exchange)
-					.subscriberContext(ReactiveSecurityContextHolder.withAuthentication(auth)));
-		
+		return Mono.just(jwToken.get())
+				   .publishOn(Schedulers.elastic()).flatMap(t -> {
+				
+			if(jwtAuthenticationProvider.validateToken(t)) {
+					
+				return jwtAuthenticationProvider.getAuthentication(t)
+						.map(ReactiveSecurityContextHolder::withAuthentication)
+						.flatMap(c -> chain.filter(exchange).subscriberContext(c));
+				}
+				else {
+					return chain.filter(exchange);
+				}
+			});
 	}
 
-	private String getTokenFromHeader(ServerHttpRequest request) {
+	private Optional<String> getTokenFromHeader(ServerHttpRequest request) {
 		List<String> authorizationHeader = request.getHeaders().get(AUTHORIZATION_HEADER);
 
-		if (CollectionUtils.isEmpty(authorizationHeader)) {
-			return null;
+		if (authorizationHeader == null || authorizationHeader.isEmpty()) {
+			return  Optional.empty();
 		}
 
-		String bearerToken = authorizationHeader.get(0);
+		final String bearerToken = authorizationHeader.get(0);
 
 		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-			return bearerToken.substring(7, bearerToken.length());
+			return Optional.of(bearerToken.substring(7, bearerToken.length()));
 		}
-		return null;
+		return Optional.empty();
 	}
 }
