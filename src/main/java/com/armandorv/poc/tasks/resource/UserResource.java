@@ -5,6 +5,7 @@ import java.security.Principal;
 import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,8 +42,10 @@ public class UserResource {
     }
     
     @GetMapping("/users/me")
-    public Mono<User> me(Principal principal) {
-    	return userRepository.findByEmailIgnoreCase(principal.getName());
+    public Mono<User> me(Mono<Principal> principal) {
+    	return ReactiveSecurityContextHolder.getContext()
+    			.map(ctx-> ctx.getAuthentication().getName())
+    			.flatMap(this.userRepository::findByEmailIgnoreCase);
     }
  
 }

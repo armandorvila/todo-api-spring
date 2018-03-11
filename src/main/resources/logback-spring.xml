@@ -2,24 +2,13 @@
 <configuration>
 	<include resource="org/springframework/boot/logging/logback/base.xml" />
 	
-	<logger name="javax.activation" level="WARN" />
 	<logger name="javax.mail" level="WARN" />
-	<logger name="javax.xml.bind" level="WARN" />
-	<logger name="ch.qos.logback" level="WARN" />
-	<logger name="com.codahale.metrics" level="WARN" />
-	<logger name="com.sun" level="WARN" />
 	<logger name="org.apache" level="WARN" />
 	<logger name="org.bson" level="WARN" />
 	<logger name="org.hibernate.validator" level="WARN" />
-	<logger name="org.xnio" level="WARN" />
-	<logger name="sun.rmi" level="WARN" />
-	<logger name="liquibase" level="WARN" />
-	<logger name="sun.net.www" level="WARN" />
-	<logger name="sun.rmi.transport" level="WARN" />
 	<logger name="org.springframework" level="WARN" />
 	<logger name="org.springframework.web" level="INFO" />
 	<logger name="org.springframework.security" level="INFO" />
-	<logger name="org.springframework.cache" level="WARN" />
 
 	<logger name="com.armandorv.poc.tasks" level="DEBUG"/>
 	

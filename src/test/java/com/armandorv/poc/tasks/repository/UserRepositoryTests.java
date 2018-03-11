@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.armandorv.poc.tasks.domain.User;
@@ -35,14 +36,21 @@ public class UserRepositoryTests {
 	}
 	
 	@Test
-	public void shouldGetAllTheUsers() {
+	public void should_GetAllTasks_When_NotGivenPageable() {
 		StepVerifier.create(userRepository.findAll())
 		.expectNextCount(2)
 		.verifyComplete();
 	}
 	
 	@Test
-	public void shouldGetUserById() {
+	public void should_GetFirstPage_When_GivenPageable() {
+		StepVerifier.create(userRepository.findAll(PageRequest.of(1, 1)))
+		.expectNextCount(1)
+		.verifyComplete();
+	}
+	
+	@Test
+	public void should_GetUser_When_GivenId() { 
 		final User user = users.blockFirst();
 		
 		StepVerifier.create(userRepository.findById(user.getId()))
@@ -51,7 +59,7 @@ public class UserRepositoryTests {
 	}
 	
 	@Test
-	public void shouldGetUserByEmailIgnoreCase() {
+	public void should_GetUser_When_GivenEmail() {
 		final User user = users.blockFirst();
 		
 		StepVerifier.create(userRepository.findByEmailIgnoreCase(user.getEmail().toUpperCase()))
@@ -60,7 +68,7 @@ public class UserRepositoryTests {
 	}
 
 	@Test
-	public void shouldCreateUser() {
+	public void should_CreateUser_When_GivenValidUser() {
 		final User user = new User("some.new.user@gmail.com", "Some", "New user", "secret");
 		
 		StepVerifier.create(userRepository.save(user))

@@ -1,5 +1,7 @@
 package com.armandorv.poc.tasks.resource;
 
+import static org.springframework.http.HttpStatus.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +27,9 @@ public class TaskResource {
 	}
 
 	@GetMapping("/tasks/{id}")
-	public Mono<Task> getTask(@PathVariable("id") String id) {
-		return taskRepository.findById(id);
+	public Mono<ResponseEntity<Task>> getTask(@PathVariable("id") String id) {
+		return taskRepository.findById(id)
+				.map(task -> new ResponseEntity<>(task, OK))
+				.defaultIfEmpty(new ResponseEntity<>(NOT_FOUND));
 	}
 }

@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.armandorv.poc.tasks.domain.Task;
@@ -35,14 +36,21 @@ public class TaskRepositoryTests {
 	}
 	
 	@Test
-	public void shouldGetAllTheTasks() {
+	public void should_GetAllTasks_When_NotGivenPageable() {
 		StepVerifier.create(taskRepository.findAll())
 		.expectNextCount(2)
 		.verifyComplete();
 	}
 	
 	@Test
-	public void shouldGetTaskById() {
+	public void should_GetFirstPage_When_GivenPageable() {
+		StepVerifier.create(taskRepository.findAll(PageRequest.of(1, 1)))
+		.expectNextCount(1)
+		.verifyComplete();
+	}
+	
+	@Test
+	public void should_GetTask_When_GivenId() {
 		final Task task = tasks.blockFirst();
 		
 		StepVerifier.create(taskRepository.findById(task.getId()))
@@ -51,7 +59,7 @@ public class TaskRepositoryTests {
 	}
 	
 	@Test
-	public void shouldCreateTask() {
+	public void should_CreateTask_When_GivenValidTask() {
 		final Task task = new Task("Some pointless task");
 		
 		StepVerifier.create(taskRepository.save(task))
@@ -60,7 +68,6 @@ public class TaskRepositoryTests {
 		.assertNext(result -> assertThat(result.getId()).isNotNull())
 		.assertNext(result -> assertThat(result.getCreatedAt()).isNotNull())
 		.assertNext(result -> assertThat(result.getLastModifiedAt()).isNotNull())
-		
 		.assertNext(result -> assertThat(result.getSummary()).isEqualTo(task.getSummary()));
 	}
 

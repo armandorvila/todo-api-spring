@@ -5,16 +5,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import com.armandorv.poc.tasks.AbstractResourceTest;
+import com.armandorv.poc.tasks.AbstractIntTest;
 import com.armandorv.poc.tasks.resource.dto.UserCredentialsDTO;
 
-public class UserTokenResourceTests extends AbstractResourceTest { 
+public class UserTokenResourceIntTests extends AbstractIntTest { 
 
 	@Autowired
 	private WebTestClient webClient;
 	
 	@Test
-	public void clientGetsToken_ValidCredentials() throws Exception {
+	public void should_GetUserToken_When_ValidCredentials() throws Exception {
 		
 		webClient.post().uri("/authenticate")
 					.accept(MediaType.APPLICATION_JSON)
@@ -28,7 +28,7 @@ public class UserTokenResourceTests extends AbstractResourceTest {
 	}
 	
 	@Test
-	public void clientGetsToken_InvalidCredentials() throws Exception {
+	public void should_Get401_When_NotValidCredentials() throws Exception {
 		final UserCredentialsDTO credentials = new UserCredentialsDTO("someinvalidemail@gmail.com", "secret");
 		
 		webClient.post().uri("/authenticate")

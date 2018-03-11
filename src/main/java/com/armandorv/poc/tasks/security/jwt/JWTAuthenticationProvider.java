@@ -22,6 +22,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
@@ -62,7 +63,7 @@ public class JWTAuthenticationProvider {
 
 	public Optional<Authentication> toAuthentication(String token) {
 		if (!validateToken(token)) {
-			return Optional.empty();
+			Mono.empty();
 		}
 
 		Claims claims = Jwts.parser()
@@ -77,10 +78,8 @@ public class JWTAuthenticationProvider {
 				.password("").roles(authorities)
 				.build();
 
-		Authentication authentication = new UsernamePasswordAuthenticationToken(principal, token,
-				principal.getAuthorities());
-
-		return Optional.of(authentication);
+		return Optional.of(new UsernamePasswordAuthenticationToken(principal, token,
+				principal.getAuthorities()));
 	}
 
 	private boolean validateToken(String authToken) {

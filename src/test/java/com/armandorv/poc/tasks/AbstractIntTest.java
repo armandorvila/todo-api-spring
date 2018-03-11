@@ -25,7 +25,7 @@ import reactor.test.StepVerifier;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public abstract class AbstractResourceTest {
+public abstract class AbstractIntTest {
 	
 	private static final String PASSWORD = "{bcrypt}$2a$10$CI1Eqs4PNuldiV7SkHoaQ.vFaIOUf1IZhcuYkKRcThJK.Nkjc5ZIG";
 	
