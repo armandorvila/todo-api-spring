@@ -17,7 +17,7 @@ public class ApplicationProperties {
 		
 		@Data
 		public static class Jwt {
-			private String secret = null;
+			private String secret = "secret";
 			private Long tokenValidityInSeconds = 1800L;
 		}
 	}

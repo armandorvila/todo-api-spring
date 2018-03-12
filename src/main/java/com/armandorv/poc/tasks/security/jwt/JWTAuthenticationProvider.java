@@ -1,9 +1,6 @@
 package com.armandorv.poc.tasks.security.jwt;
 
-import java.util.Date;
 import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,13 +8,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.armandorv.poc.tasks.config.ApplicationProperties;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
@@ -29,42 +24,28 @@ public class JWTAuthenticationProvider {
 
 	private static final String AUTHORITIES_KEY = "auth";
 
-	private ApplicationProperties properties;
+	private JwtBuilder jwtBuilder;
 	
-    private String secretKey;
-
-    private long tokenValidityInMilliseconds;
-
-	public JWTAuthenticationProvider(ApplicationProperties properties) {
-		this.properties = properties;
+	private JwtParser jwtParser;
+	
+	public JWTAuthenticationProvider(JwtBuilder jwtBuilder, JwtParser jwtParser) {
+		this.jwtParser = jwtParser;
+		this.jwtBuilder = jwtBuilder;
 	}
-	
-    @PostConstruct
-    public void init() {
-        this.secretKey = properties.getSecurity().getJwt().getSecret();
-        this.tokenValidityInMilliseconds = 1000 * properties.getSecurity().getJwt().getTokenValidityInSeconds();
-    }
 
-	public String toToken(Authentication authentication) {
+	public String getToken(Authentication authentication) {
 		String authorities = authentication.getAuthorities().stream()
 				.map(a -> a.getAuthority()
 				.replaceAll("ROLE_", ""))
 				.collect(Collectors.joining(","));
-		
-		 Date validity = new Date(new Date().getTime() + this.tokenValidityInMilliseconds);
 
-		return Jwts.builder()
+		return jwtBuilder
 				.setSubject(authentication.getName())
-				.claim(AUTHORITIES_KEY, authorities)
-				.signWith(SignatureAlgorithm.HS512, this.secretKey)
-				.setExpiration(validity).compact();
+				.claim(AUTHORITIES_KEY, authorities).compact();
 	}
 
 	public Mono<Authentication> getAuthentication(String token) {
-		Claims claims = Jwts.parser()
-				.setSigningKey(this.secretKey)
-				.parseClaimsJws(token)
-				.getBody();
+		Claims claims = jwtParser.parseClaimsJws(token).getBody();
 
 		String[] authorities = claims.get(AUTHORITIES_KEY).toString().split(",");
 
@@ -82,7 +63,7 @@ public class JWTAuthenticationProvider {
 			return false;
 		}
 		try {
-			Jwts.parser().setSigningKey(this.secretKey).parseClaimsJws(authToken);
+			jwtParser.parseClaimsJws(authToken);
 			return true;
 		} catch (SignatureException e) {
 			log.info("Invalid JWT signature.");

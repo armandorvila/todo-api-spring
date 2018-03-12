@@ -24,6 +24,7 @@ public class SecurityConfiguration {
 
 	public SecurityConfiguration(JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint,
 			JWTAuthenticationWebFilter jwtWebFilter) {
+		
 		this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
 		this.jwtWebFilter = jwtWebFilter;
 	}
@@ -49,7 +50,7 @@ public class SecurityConfiguration {
 	public PasswordEncoder passwordEncoder() {
 		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
 	}
-
+	
 	@Bean
 	public UserDetailsRepositoryReactiveAuthenticationManager authenticationManager(
 			ReactiveUserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
@@ -58,7 +59,6 @@ public class SecurityConfiguration {
 				userDetailsService);
 
 		authenticationManager.setPasswordEncoder(passwordEncoder);
-
 		return authenticationManager;
 	}
 }

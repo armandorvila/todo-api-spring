@@ -46,7 +46,7 @@ public class UserTokenResource {
     }
     
     private UserTokenDTO toUserToken(Authentication authentication) {
-    	final String token = tokenProvider.toToken(authentication);
+    	final String token = tokenProvider.getToken(authentication);
     	return new UserTokenDTO("User authenticated sucessfully.", token);
     }
     
