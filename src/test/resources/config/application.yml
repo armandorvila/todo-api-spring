@@ -1,0 +1,9 @@
+logging:
+  file: ./target/todo-test.log
+  
+  
+application:
+  security:
+    jwt: 
+      secret: secret
+      token-validity-in-seconds: 1800

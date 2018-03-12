@@ -1,0 +1,20 @@
+[
+	{ 
+	    "_id" : ObjectId("57f4dadc6d138cf005711f4d"), 
+	    "email" : "some.user@gmail.com",
+	    "firstName" : "Some",
+	    "lastName" : "User",
+	    "password" : "{bcrypt}$2a$10$CI1Eqs4PNuldiV7SkHoaQ.vFaIOUf1IZhcuYkKRcThJK.Nkjc5ZIG",
+	    "createdAt" : ISODate("2018-03-09T18:59:15.055Z"),
+    	"lastModifiedAt" : ISODate("2018-03-09T18:59:15.055Z")
+	},
+	{
+	    "_id" : ObjectId("57f4dadc6d138cf005711f4e"), 
+	     "email" : "just.another.user@gmail.com",
+	    "firstName" : "Just another",
+	    "lastName" : "User",
+	    "password" : "{bcrypt}$2a$10$CI1Eqs4PNuldiV7SkHoaQ.vFaIOUf1IZhcuYkKRcThJK.Nkjc5ZIG",
+	    "createdAt" : ISODate("2018-03-09T18:59:15.055Z"),
+    	"lastModifiedAt" : ISODate("2018-03-09T18:59:15.055Z")
+	}
+]
