@@ -58,8 +58,22 @@ public class UsersApplicationTests extends ApplicationTests {
 	}
 	
 	@Test
-	public void should_GetUserToken_When_ValidCredentials() throws Exception {
+	public void should_GetBadRequest_When_UserIsInvalid() throws Exception {
+		final User user = new User("notavalidemail", "New", "User", "secret");
 		
+		webClient.post().uri("/users/signup")
+								.accept(MediaType.APPLICATION_JSON)
+								.syncBody(user)
+								.exchange()
+								.expectStatus().isCreated()
+								.expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+								.expectBody(User.class)
+								.returnResult()
+								.getResponseBody();
+	}
+	
+	@Test
+	public void should_GetUserToken_When_ValidCredentials() throws Exception {
 		webClient.post().uri("/authenticate")
 					.accept(MediaType.APPLICATION_JSON)
 					.syncBody(userCredentials())
@@ -80,6 +94,18 @@ public class UsersApplicationTests extends ApplicationTests {
 					.syncBody(credentials)
 					.exchange()
 					.expectStatus().isUnauthorized()
+					.expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8);
+	}
+	
+	@Test
+	public void should_Get400_When_MalformedEmail() throws Exception {
+		final UserCredentialsDTO credentials = new UserCredentialsDTO("malformedemail", "secret");
+		
+		webClient.post().uri("/authenticate")
+					.accept(MediaType.APPLICATION_JSON)
+					.syncBody(credentials)
+					.exchange()
+					.expectStatus().isBadRequest()
 					.expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8);
 	}
 }
