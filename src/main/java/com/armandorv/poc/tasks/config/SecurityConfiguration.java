@@ -18,14 +18,14 @@ import com.armandorv.poc.tasks.security.jwt.JWTAuthenticationWebFilter;
 @EnableReactiveMethodSecurity
 public class SecurityConfiguration {
 
-	private JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+	private JWTAuthenticationEntryPoint authenticationEntryPoint;
 
 	private JWTAuthenticationWebFilter jwtWebFilter;
 
-	public SecurityConfiguration(JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+	public SecurityConfiguration(JWTAuthenticationEntryPoint authenticationEntryPoint,
 			JWTAuthenticationWebFilter jwtWebFilter) {
 		
-		this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+		this.authenticationEntryPoint = authenticationEntryPoint;
 		this.jwtWebFilter = jwtWebFilter;
 	}
 
@@ -35,8 +35,8 @@ public class SecurityConfiguration {
 		http.logout().disable();
 		http.httpBasic().disable();
 		http.formLogin().disable();
-
-		http.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint);
+		
+		http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
 		http.addFilterAt(jwtWebFilter, SecurityWebFiltersOrder.AUTHENTICATION);
 
 		http.authorizeExchange().pathMatchers("/authenticate/**").permitAll();

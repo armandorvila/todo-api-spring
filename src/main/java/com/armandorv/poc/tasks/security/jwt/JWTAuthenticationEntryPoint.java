@@ -1,5 +1,6 @@
 package com.armandorv.poc.tasks.security.jwt;
 
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
@@ -22,28 +23,25 @@ import reactor.core.publisher.Mono;
 @Component
 public class JWTAuthenticationEntryPoint implements ServerAuthenticationEntryPoint {
 
-	private static final String CONTENT_TYPE = "Content-Type";
-
-	private ObjectMapper objectMapper;
+	private final ObjectMapper objectMapper;
 
 	public JWTAuthenticationEntryPoint(ObjectMapper objectMapper) {
 		this.objectMapper = objectMapper;
 	}
 
 	@Override
-	public Mono<Void> commence(ServerWebExchange exchange, AuthenticationException e) {		
-		return Mono.fromRunnable(() -> {
-			final ServerHttpResponse response = exchange.getResponse();
-		
-			response.getHeaders().add(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE);
-			response.setStatusCode(UNAUTHORIZED);
-			
-			response.writeWith(errorMessage(e));
-		});
+	public Mono<Void> commence(ServerWebExchange exchange, AuthenticationException e) {
+		final ServerHttpResponse response = exchange.getResponse();
+
+		response.getHeaders().add(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE);
+		response.setStatusCode(UNAUTHORIZED);
+
+		return response.writeWith(errorMessage(e));
 	}
 
 	private Mono<DataBuffer> errorMessage(AuthenticationException ex) {
-		ErrorDTO error = new ErrorDTO("You have to provide a valid token to acess this resource.", ex.getMessage());
+		ErrorDTO error = new ErrorDTO(UNAUTHORIZED, "You have to provide a valid token to acess this resource.", 
+				ex.getMessage());
 
 		byte[] message = new byte[0];
 
