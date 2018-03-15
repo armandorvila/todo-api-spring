@@ -1,8 +1,8 @@
 package com.armandorv.poc.tasks.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,9 +29,9 @@ public class UserDetailsServiceTests {
 	}
 	
 	@Test
-	public void should_GetUserDetails_When_UserIsFound() {
-		when(this.userRepository.findByEmailIgnoreCase(testUser.getEmail()))
-		.thenReturn(Mono.just(testUser));
+	public void should_GetUserDetails_When_UserIsFound() {		
+		given(userRepository.findByEmailIgnoreCase(testUser.getEmail()))
+		  .willReturn(Mono.just(testUser));
 		
 		Mono<UserDetails> userDetails = userDetailsService.findByUsername(testUser.getEmail());
 		
@@ -44,8 +44,8 @@ public class UserDetailsServiceTests {
 	
 	@Test
 	public void should_GetEmptyMono_When_UserIsNotFound() {
-		when(this.userRepository.findByEmailIgnoreCase("not_existent_username"))
-		.thenReturn(Mono.empty());
+		given(userRepository.findByEmailIgnoreCase("not_existent_username"))
+		  .willReturn(Mono.empty());
 		
 		Mono<UserDetails> userDetails = userDetailsService.findByUsername("not_existent_username");
 		

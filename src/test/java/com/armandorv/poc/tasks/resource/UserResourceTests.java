@@ -1,7 +1,7 @@
 package com.armandorv.poc.tasks.resource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +39,8 @@ public class UserResourceTests{
 	@Test  
 	@WithMockUser(username = "user.some@gmail.com")
 	public void should_GetCurrentUser_When_UserExists() throws Exception {
-		when(userRepository.findByEmailIgnoreCase(testUser.getEmail())).thenReturn(Mono.just(testUser));
+		given(userRepository.findByEmailIgnoreCase(testUser.getEmail()))
+		  .willReturn(Mono.just(testUser));
 	    
 		final User result =  webClient.get().uri("/users/me")
 						.accept(MediaType.APPLICATION_JSON)
