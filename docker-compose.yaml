@@ -9,6 +9,7 @@ services:
         - 27017:27017
     command: mongod --smallfiles --logpath=/dev/null
 
+  
   tasks-api-data:
     container_name: tasks-api-data
     image: armandorvila/tasks-api-data

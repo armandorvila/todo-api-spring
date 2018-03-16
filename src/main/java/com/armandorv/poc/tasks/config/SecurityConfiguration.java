@@ -11,18 +11,18 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
-import com.armandorv.poc.tasks.security.jwt.JWTAuthenticationEntryPoint;
+import com.armandorv.poc.tasks.security.AuthenticationEntryPoint;
 import com.armandorv.poc.tasks.security.jwt.JWTAuthenticationWebFilter;
 
 @Configuration
 @EnableReactiveMethodSecurity
 public class SecurityConfiguration {
 
-	private JWTAuthenticationEntryPoint authenticationEntryPoint;
+	private AuthenticationEntryPoint authenticationEntryPoint;
 
 	private JWTAuthenticationWebFilter jwtWebFilter;
 
-	public SecurityConfiguration(JWTAuthenticationEntryPoint authenticationEntryPoint,
+	public SecurityConfiguration(AuthenticationEntryPoint authenticationEntryPoint,
 			JWTAuthenticationWebFilter jwtWebFilter) {
 		
 		this.authenticationEntryPoint = authenticationEntryPoint;

@@ -1,4 +1,4 @@
-package com.armandorv.poc.tasks.security.jwt;
+package com.armandorv.poc.tasks.security;
 
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -12,7 +12,7 @@ import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.armandorv.poc.tasks.resource.dto.ErrorDTO;
+import com.armandorv.poc.tasks.resource.errors.ErrorDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -21,11 +21,11 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
-public class JWTAuthenticationEntryPoint implements ServerAuthenticationEntryPoint {
+public class AuthenticationEntryPoint implements ServerAuthenticationEntryPoint {
 
 	private final ObjectMapper objectMapper;
 
-	public JWTAuthenticationEntryPoint(ObjectMapper objectMapper) {
+	public AuthenticationEntryPoint(ObjectMapper objectMapper) {
 		this.objectMapper = objectMapper;
 	}
 
@@ -36,12 +36,11 @@ public class JWTAuthenticationEntryPoint implements ServerAuthenticationEntryPoi
 		response.getHeaders().add(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE);
 		response.setStatusCode(UNAUTHORIZED);
 
-		return response.writeWith(errorMessage(e));
+		return response.writeWith(errorMessage());
 	}
 
-	private Mono<DataBuffer> errorMessage(AuthenticationException ex) {
-		ErrorDTO error = new ErrorDTO(UNAUTHORIZED, "You have to provide a valid token to acess this resource.", 
-				ex.getMessage());
+	private Mono<DataBuffer> errorMessage() {
+		ErrorDTO error = new ErrorDTO(UNAUTHORIZED.value(), "You have to provide a valid token to acess this resource.");
 
 		byte[] message = new byte[0];
 

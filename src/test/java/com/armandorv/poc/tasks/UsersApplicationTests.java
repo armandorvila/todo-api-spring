@@ -3,17 +3,12 @@ package com.armandorv.poc.tasks;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.reactive.server.WebTestClient;
 
 import com.armandorv.poc.tasks.domain.User;
 import com.armandorv.poc.tasks.resource.dto.UserCredentialsDTO;
 
 public class UsersApplicationTests extends ApplicationTests {
-
-	@Autowired
-	private WebTestClient webClient;
 	
 	@Test
 	public void should_GetCurrentUser_When_Authorized() throws Exception {		
@@ -28,7 +23,7 @@ public class UsersApplicationTests extends ApplicationTests {
 	}
 	
 	@Test
-	public void should_Get401_When_NotAuthorized() throws Exception {
+	public void should_Get401_When_TokenIsNotProvided() throws Exception {
 		webClient.get().uri("/users/me")
 					.accept(MediaType.APPLICATION_JSON)
 					.exchange()
@@ -36,25 +31,21 @@ public class UsersApplicationTests extends ApplicationTests {
 	}
 	
 	@Test
-	public void should_RegisterUser_When_UserIsValid() throws Exception {
-		final User user = new User("new.user@gmail.com", "New", "User", "secret");
-		
-		final User result = webClient.post().uri("/users/signup")
-								.accept(MediaType.APPLICATION_JSON)
-								.syncBody(user)
-								.exchange()
-								.expectStatus().isCreated()
-								.expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-								.expectBody(User.class)
-								.returnResult()
-								.getResponseBody();
-		
-		assertThat(result.getId()).isNotNull();
-		assertThat(result.getCreatedAt()).isNotNull();
-		assertThat(result.getLastModifiedAt()).isNotNull();
-		assertThat(result.getEmail()).isEqualTo(user.getEmail());
-		assertThat(result.getFirstName()).isEqualTo(user.getFirstName());
-		assertThat(result.getLastName()).isEqualTo(user.getLastName());
+	public void should_Get401_When_TokenIsInvalid() throws Exception {
+		webClient.get().uri("/users/me")
+					.accept(MediaType.APPLICATION_JSON)
+					.header("Authorization", "Bearear sometoken")
+					.exchange()
+					.expectStatus().isUnauthorized();
+	}
+	
+	@Test
+	public void should_Get401_When_TokenIsMalformed() throws Exception {
+		webClient.get().uri("/users/me")
+					.accept(MediaType.APPLICATION_JSON)
+					.header("Authorization", "NotABearerToken")
+					.exchange()
+					.expectStatus().isUnauthorized();
 	}
 	
 	@Test
@@ -65,7 +56,7 @@ public class UsersApplicationTests extends ApplicationTests {
 								.accept(MediaType.APPLICATION_JSON)
 								.syncBody(user)
 								.exchange()
-								.expectStatus().isCreated()
+								.expectStatus().isBadRequest()
 								.expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
 								.expectBody(User.class)
 								.returnResult()
@@ -98,14 +89,21 @@ public class UsersApplicationTests extends ApplicationTests {
 	}
 	
 	@Test
-	public void should_Get400_When_MalformedEmail() throws Exception {
-		final UserCredentialsDTO credentials = new UserCredentialsDTO("malformedemail", "secret");
+	public void should_RegisterUser_When_UserIsValid() throws Exception {
+		final User user = new User("new.user@gmail.com", "New", "User", "secret");
 		
-		webClient.post().uri("/authenticate")
-					.accept(MediaType.APPLICATION_JSON)
-					.syncBody(credentials)
-					.exchange()
-					.expectStatus().isBadRequest()
-					.expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8);
+		final User result = webClient.post().uri("/users/signup")
+								.accept(MediaType.APPLICATION_JSON)
+								.syncBody(user)
+								.exchange()
+								.expectStatus().isCreated()
+								.expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+								.expectBody(User.class)
+								.returnResult()
+								.getResponseBody();
+		
+		assertThat(result.getId()).isNotNull();
+		assertThat(result.getCreatedAt()).isNotNull();
+		assertThat(result.getEmail()).isEqualTo(user.getEmail());
 	}
 }

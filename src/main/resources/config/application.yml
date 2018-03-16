@@ -1,15 +1,4 @@
 spring:
-  security:
-    oauth2:
-      client:
-        registration:
-          github-client-1:
-            client-id: 52a9667755bc8aa41360
-            client-secret: 8fcd452f3fd5e9947b5cb3bcbdfcae968e80b875
-            client-name: Github user
-            provider: github
-            scope: user
-            redirect-uri-template: http://localhost:8080/login/oauth2/code/github
   data:
     mongodb:
       uri: mongodb://localhost:27017/tasks
@@ -20,6 +9,8 @@ application:
     jwt: 
       secret: secret
       token-validity-in-seconds: 1800
+  errorHandler:
+    debug: false
       
       
       

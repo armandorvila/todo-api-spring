@@ -1,22 +1,16 @@
 package com.armandorv.poc.tasks.resource;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-
-import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.armandorv.poc.tasks.resource.dto.ErrorDTO;
 import com.armandorv.poc.tasks.resource.dto.UserCredentialsDTO;
 import com.armandorv.poc.tasks.resource.dto.UserTokenDTO;
 import com.armandorv.poc.tasks.security.jwt.JWTAuthenticationProvider;
@@ -60,12 +54,4 @@ public class UserTokenResource {
     	exchange.getResponse().getHeaders()
 			.add(AUTH_HEADER_NAME, String.format(AUTH_HEADER_VALUE, userToken.getToken()));
     }
-    
-
-	@ExceptionHandler(ConstraintViolationException.class)
-	protected ResponseEntity<ErrorDTO> handleConstraintViolation(ConstraintViolationException ex) {
-		ErrorDTO errorDTO = new ErrorDTO(BAD_REQUEST, "Validation error", ex.getMessage());
-		return new ResponseEntity<>(errorDTO, BAD_REQUEST);
-	}
- 
 }
