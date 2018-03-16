@@ -1,6 +1,6 @@
 package com.armandorv.poc.tasks.resource;
 
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.given;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
 
 @RunWith(SpringRunner.class)
 @WebFluxTest(TaskResource.class)
-public class TaskResourceTests{
+public class TaskResourceTests {
 
 	@Autowired
 	private WebTestClient webClient;
