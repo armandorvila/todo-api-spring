@@ -2,6 +2,7 @@ package com.armandorv.poc.tasks.domain;
 
 import java.time.Instant;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -27,8 +28,8 @@ public class User {
 	@Id
 	private String id;
 	
+	@Email
 	@Indexed(unique = true)
-	@NotEmpty(message = "This field is required")
 	private String email;
 
 	@NotEmpty(message = "This field is required")

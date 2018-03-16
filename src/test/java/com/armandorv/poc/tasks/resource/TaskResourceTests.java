@@ -1,6 +1,6 @@
 package com.armandorv.poc.tasks.resource;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,13 +13,14 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import com.armandorv.poc.tasks.domain.Task;
 import com.armandorv.poc.tasks.repository.TaskRepository;
+import com.armandorv.poc.tasks.resource.TaskResource;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RunWith(SpringRunner.class)
 @WebFluxTest(TaskResource.class)
-public class TaskResourceTests{
+public class TaskResourceTests {
 
 	@Autowired
 	private WebTestClient webClient;
@@ -30,8 +31,9 @@ public class TaskResourceTests{
 	private Task testTask = new Task("57f4dadc6d138cf005711f4d", "Some task");
 	
 	@Test
-	public void should_GetAllTasks_When_NotSpecifiedPagination() throws Exception {
-		when(taskRepository.findAll()).thenReturn(Flux.just(testTask));
+	public void should_GetAllTasks_When_NotSpecifiedPagination() throws Exception {		
+		given(taskRepository.findAll())
+		  .willReturn(Flux.just(testTask));
 		
 		webClient.get().uri("/tasks")
 					.accept(MediaType.APPLICATION_JSON)
@@ -45,7 +47,8 @@ public class TaskResourceTests{
 	
 	@Test
 	public void should_GetTask_When_GivenExistentId() throws Exception {
-		when(taskRepository.findById(testTask.getId())).thenReturn(Mono.just(testTask));
+		given(taskRepository.findById(testTask.getId()))
+		  .willReturn(Mono.just(testTask));
 		
 		webClient.get().uri("/tasks/{id}", testTask.getId())
 					.accept(MediaType.APPLICATION_JSON)
@@ -58,7 +61,8 @@ public class TaskResourceTests{
 
 	@Test
 	public void should_Get404_When_GivenNonExistentId() throws Exception {
-		when(taskRepository.findById("someid")).thenReturn(Mono.empty());
+		given(taskRepository.findById("someid"))
+		  .willReturn(Mono.empty());
 		
 		webClient.get().uri("/tasks/{id}", "someid")
 					.accept(MediaType.APPLICATION_JSON)

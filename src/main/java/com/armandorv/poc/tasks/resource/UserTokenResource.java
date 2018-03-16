@@ -54,5 +54,4 @@ public class UserTokenResource {
     	exchange.getResponse().getHeaders()
 			.add(AUTH_HEADER_NAME, String.format(AUTH_HEADER_VALUE, userToken.getToken()));
     }
- 
 }

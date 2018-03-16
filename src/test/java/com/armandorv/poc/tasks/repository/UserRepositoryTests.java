@@ -36,25 +36,9 @@ public class UserRepositoryTests {
 	}
 	
 	@Test
-	public void should_GetAllTasks_When_NotGivenPageable() {
-		StepVerifier.create(userRepository.findAll())
-		.expectNextCount(2)
-		.verifyComplete();
-	}
-	
-	@Test
 	public void should_GetFirstPage_When_GivenPageable() {
 		StepVerifier.create(userRepository.findAll(PageRequest.of(1, 1)))
 		.expectNextCount(1)
-		.verifyComplete();
-	}
-	
-	@Test
-	public void should_GetUser_When_GivenId() { 
-		final User user = users.blockFirst();
-		
-		StepVerifier.create(userRepository.findById(user.getId()))
-		.expectNext(user)
 		.verifyComplete();
 	}
 	

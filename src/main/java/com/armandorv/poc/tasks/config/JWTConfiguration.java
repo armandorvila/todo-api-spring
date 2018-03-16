@@ -24,7 +24,6 @@ public class JWTConfiguration {
 		final long tokenValidityInMilliseconds = 1000 * properties.getSecurity().getJwt().getTokenValidityInSeconds();
 
 		final Date validity = new Date(new Date().getTime() + tokenValidityInMilliseconds);
-
 		final String secretKey = properties.getSecurity().getJwt().getSecret();
 
 		return Jwts.builder().signWith(SignatureAlgorithm.HS512, secretKey).setExpiration(validity);

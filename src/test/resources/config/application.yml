@@ -7,3 +7,5 @@ application:
     jwt: 
       secret: secret
       token-validity-in-seconds: 1800
+  error-handler:
+    debug: true

@@ -1,20 +1,11 @@
-package com.armandorv.poc.tasks.resource;
+package com.armandorv.poc.tasks;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.reactive.server.WebTestClient;
 
-import com.armandorv.poc.tasks.AbstractIntTest;
 import com.armandorv.poc.tasks.domain.Task;
 
-@RunWith(SpringRunner.class)
-public class TaskResourceIntTests extends AbstractIntTest{
-
-	@Autowired
-	private WebTestClient webClient;
+public class TasksApplicationTests extends ApplicationTests {
 	
 	@Test
 	public void should_ListTasks_When_Authorized() throws Exception {

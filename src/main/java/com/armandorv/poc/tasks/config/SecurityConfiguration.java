@@ -11,21 +11,21 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
-import com.armandorv.poc.tasks.security.jwt.JWTAuthenticationEntryPoint;
+import com.armandorv.poc.tasks.security.AuthenticationEntryPoint;
 import com.armandorv.poc.tasks.security.jwt.JWTAuthenticationWebFilter;
 
 @Configuration
 @EnableReactiveMethodSecurity
 public class SecurityConfiguration {
 
-	private JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+	private AuthenticationEntryPoint authenticationEntryPoint;
 
 	private JWTAuthenticationWebFilter jwtWebFilter;
 
-	public SecurityConfiguration(JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+	public SecurityConfiguration(AuthenticationEntryPoint authenticationEntryPoint,
 			JWTAuthenticationWebFilter jwtWebFilter) {
 		
-		this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+		this.authenticationEntryPoint = authenticationEntryPoint;
 		this.jwtWebFilter = jwtWebFilter;
 	}
 
@@ -35,8 +35,8 @@ public class SecurityConfiguration {
 		http.logout().disable();
 		http.httpBasic().disable();
 		http.formLogin().disable();
-
-		http.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint);
+		
+		http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
 		http.addFilterAt(jwtWebFilter, SecurityWebFiltersOrder.AUTHENTICATION);
 
 		http.authorizeExchange().pathMatchers("/authenticate/**").permitAll();

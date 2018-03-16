@@ -36,25 +36,9 @@ public class TaskRepositoryTests {
 	}
 	
 	@Test
-	public void should_GetAllTasks_When_NotGivenPageable() {
-		StepVerifier.create(taskRepository.findAll())
-		.expectNextCount(2)
-		.verifyComplete();
-	}
-	
-	@Test
 	public void should_GetFirstPage_When_GivenPageable() {
 		StepVerifier.create(taskRepository.findAll(PageRequest.of(1, 1)))
 		.expectNextCount(1)
-		.verifyComplete();
-	}
-	
-	@Test
-	public void should_GetTask_When_GivenId() {
-		final Task task = tasks.blockFirst();
-		
-		StepVerifier.create(taskRepository.findById(task.getId()))
-		.expectNext(task)
 		.verifyComplete();
 	}
 	
