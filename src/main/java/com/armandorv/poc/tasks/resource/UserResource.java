@@ -21,31 +21,35 @@ import reactor.core.scheduler.Schedulers;
 
 @RestController
 public class UserResource {
-	
+
 	private UserRepository userRepository;
-	
+
 	private PasswordEncoder encoder;
 
 	public UserResource(UserRepository userRepository, PasswordEncoder encoder) {
 		this.userRepository = userRepository;
 		this.encoder = encoder;
 	}
-	
-    @PostMapping("/users/signup")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Mono<@Valid User> createUser(@Valid @RequestBody User user) {
-    	
-    	return Mono.just(user)
-    			   .subscribeOn(Schedulers.parallel())
-				   .doOnNext(u -> u.setPassword(this.encoder.encode(u.getPassword())))
-				   .flatMap(this.userRepository::save);
-    }
-    
-    @GetMapping("/users/me")
-    public Mono<User> me(Mono<Principal> principal) {
-    	return ReactiveSecurityContextHolder.getContext()
-    			.map(ctx-> ctx.getAuthentication().getName())
-    			.flatMap(this.userRepository::findByEmailIgnoreCase);
-    }
- 
+
+	@PostMapping("/users/signup")
+	@ResponseStatus(HttpStatus.CREATED)
+	public Mono<@Valid User> createUser(@Valid @RequestBody User user) {
+
+		return Mono.just(user).subscribeOn(Schedulers.parallel())
+				.doOnNext(u -> u.setPassword(this.encoder.encode(u.getPassword())))
+				.flatMap(this.userRepository::save)
+				.map(this::removePassword);
+	}
+
+	@GetMapping("/users/me")
+	public Mono<User> me(Mono<Principal> principal) {
+		return ReactiveSecurityContextHolder.getContext().map(ctx -> ctx.getAuthentication().getName())
+				.flatMap(this.userRepository::findByEmailIgnoreCase)
+				.map(this::removePassword);
+	}
+
+	private User removePassword(User user) {
+		user.setPassword(null);
+		return user;
+	}
 }

@@ -12,6 +12,8 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,6 +40,7 @@ public class User {
 	@NotEmpty(message = "This field is required")
 	private String lastName;
 	
+	@JsonInclude(Include.NON_NULL)
 	@NotEmpty(message = "This field is required")
 	private String password;
 
@@ -62,3 +65,5 @@ public class User {
 		this.password = password;
 	}
 }
+
+

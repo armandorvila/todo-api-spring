@@ -12,20 +12,24 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 @Configuration
 public class JWTConfiguration {
+	
+	private final String secretKey;
+	
+	private final Long tokenValidityInMilliseconds;
+	
+	public JWTConfiguration(ApplicationProperties properties) {
+		this.secretKey = properties.getSecurity().getJwt().getSecret();
+		this.tokenValidityInMilliseconds = 1000 * properties.getSecurity().getJwt().getTokenValidityInSeconds();
+	}
 
 	@Bean
-	public JwtParser jwtParser(ApplicationProperties properties) {
-		final String secretKey = properties.getSecurity().getJwt().getSecret();
+	public JwtParser jwtParser() {
 		return Jwts.parser().setSigningKey(secretKey);
 	}
 
 	@Bean
-	public JwtBuilder jwtBuilder(ApplicationProperties properties) {
-		final long tokenValidityInMilliseconds = 1000 * properties.getSecurity().getJwt().getTokenValidityInSeconds();
-
+	public JwtBuilder jwtBuilder() {
 		final Date validity = new Date(new Date().getTime() + tokenValidityInMilliseconds);
-		final String secretKey = properties.getSecurity().getJwt().getSecret();
-
 		return Jwts.builder().signWith(SignatureAlgorithm.HS512, secretKey).setExpiration(validity);
 	}
 }

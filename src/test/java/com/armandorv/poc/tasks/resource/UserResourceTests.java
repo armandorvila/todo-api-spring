@@ -2,8 +2,8 @@ package com.armandorv.poc.tasks.resource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.never;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,10 +46,10 @@ public class UserResourceTests{
 		  .willReturn(Mono.just(testUser));
 	    
 		final User result =  webClient.get().uri("/users/me")
-						.accept(MediaType.APPLICATION_JSON)
+						.accept(APPLICATION_JSON)
 						.exchange()
 						.expectStatus().isOk()
-						.expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+						.expectHeader().contentType(APPLICATION_JSON_UTF8)
 						.expectBody(User.class)
 				        .returnResult()
 				        .getResponseBody();
@@ -60,7 +60,7 @@ public class UserResourceTests{
 	}
 	
 	@Test  
-	public void should_SignUpUser_When_UserISValid_And_IsNotAuthenticated() throws Exception {
+	public void should_SignUpUser_When_UserIsValid_And_IsNotAuthenticated() throws Exception {
 		final User validUser = new User("test@mail.com", "Test", "User", "secret");
 		
 		given(passwordEncoder.encode(validUser.getPassword()))
@@ -70,53 +70,42 @@ public class UserResourceTests{
 		  .willReturn(Mono.just(validUser));
 	    
 		 webClient.post().uri("/users/signup")
-						.accept(MediaType.APPLICATION_JSON)
+						.accept(APPLICATION_JSON)
 						.syncBody(validUser)
 						.exchange()
 						.expectStatus().isCreated()
-						.expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+						.expectHeader().contentType(APPLICATION_JSON_UTF8)
 						.expectBody(User.class)
 				        .isEqualTo(validUser);
-		 
-		 then(passwordEncoder).should().encode(validUser.getPassword());
-		 then(userRepository).should().save(validUser);
 	}	
 	
 	@Test  
-	public void should_GetBadRequest_When_Singup_And_UserEmailIsNotValid() throws Exception {
-		final User invalidUser = new User("test", "Test", "User", "secret");
-		
+	public void should_GetBadRequest_When_Singup_And_UserEmailIsNotValid() throws Exception {		
 		webClient.post().uri("/users/signup")
-						.accept(MediaType.APPLICATION_JSON)
+						.accept(APPLICATION_JSON)
 						.syncBody(new User())
 						.exchange()
 						.expectStatus().isBadRequest()
-						.expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8);
-		
-		then(userRepository).should(never()).save(invalidUser);
+						.expectHeader().contentType(APPLICATION_JSON_UTF8);
 	}
 	
 	@Test  
-	public void should_GetBadRequest_When_Singup_And_UserEmailIsNotPresent() throws Exception {
-		final User invalidUser = new User(null, "Test", "User", "secret");
-		
+	public void should_GetBadRequest_When_Singup_And_UserEmailIsNotPresent() throws Exception {		
 		webClient.post().uri("/users/signup")
-						.accept(MediaType.APPLICATION_JSON)
+						.accept(APPLICATION_JSON)
 						.syncBody(new User())
 						.exchange()
 						.expectStatus().isBadRequest()
-						.expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8);
-		
-		then(userRepository).should(never()).save(invalidUser);
+						.expectHeader().contentType(APPLICATION_JSON_UTF8);
 	}
 	
 	@Test  
 	public void should_GetBadRequest_When_Singup_And_BodyNotPresent() throws Exception {		
 		webClient.post().uri("/users/signup")
-						.accept(MediaType.APPLICATION_JSON)
+						.accept(APPLICATION_JSON)
 						.exchange()
 						.expectStatus().isBadRequest()
-						.expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8);
+						.expectHeader().contentType(APPLICATION_JSON_UTF8);
 	}
 	
 	@Test  
@@ -130,11 +119,11 @@ public class UserResourceTests{
 		  .willThrow(DuplicateKeyException.class);
 		
 		webClient.post().uri("/users/signup")
-						.accept(MediaType.APPLICATION_JSON)
+						.accept(APPLICATION_JSON)
 						.syncBody(validUser)
 						.exchange()
 						.expectStatus().isBadRequest()
-						.expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8);
+						.expectHeader().contentType(APPLICATION_JSON_UTF8);
 	}
 	
 	@Test  
