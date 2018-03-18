@@ -60,7 +60,7 @@ public class TaskResourceTests {
 	}
 
 	@Test
-	public void should_Get404_When_GivenNonExistentId() throws Exception {
+	public void should_GetNotFound_When_GivenNonExistentId() throws Exception {
 		given(taskRepository.findById("someid"))
 		  .willReturn(Mono.empty());
 		

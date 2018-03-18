@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -50,7 +51,7 @@ public class JWTAuthenticationWebFilter implements WebFilter {
 	private Optional<String> getTokenFromHeader(ServerHttpRequest request) {
 		List<String> authorizationHeader = request.getHeaders().get(AUTHORIZATION_HEADER);
 
-		if (authorizationHeader == null || authorizationHeader.isEmpty()) {
+		if (CollectionUtils.isEmpty(authorizationHeader)) {
 			return Optional.empty();
 		}
 

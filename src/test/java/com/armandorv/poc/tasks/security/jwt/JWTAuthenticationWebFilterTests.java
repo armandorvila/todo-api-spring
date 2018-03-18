@@ -94,6 +94,21 @@ public class JWTAuthenticationWebFilterTests {
 	}
 	
 	@Test
+	public void should_NotCreateSecurityContext_WhenTokenIsNotBearer() {
+		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/anyendpoint")
+				.header("Authorization", VALID_TOKEN));
+			
+		given(filterChain.filter(exchange)).willReturn(Mono.empty());
+	
+		StepVerifier.create(webFilter.filter(exchange, filterChain)).verifyComplete();
+		
+		then(authenticationProvider).should(never()).validateToken(INVALID_TOKEN);
+		then(authenticationProvider).should(never()).getAuthentication(anyString());
+		
+		then(filterChain).should(times(1)).filter(exchange);
+	}
+	
+	@Test
 	public void should_CreateSecurityContext_WhenTokenIsValid() {
 		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/anyendpoint")
 				.header("Authorization", "Bearer " + VALID_TOKEN));
