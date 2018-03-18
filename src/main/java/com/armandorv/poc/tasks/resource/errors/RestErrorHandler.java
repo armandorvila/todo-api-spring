@@ -18,17 +18,17 @@ import org.springframework.dao.DuplicateKeyException;
 @ControllerAdvice
 public class RestErrorHandler {
 
-	private boolean debug;
+	private Boolean isDebugEnabeld;
 	
 	public RestErrorHandler(ApplicationProperties properties) {
-		this.debug = properties.getErrorHandler().getDebug();
+		this.isDebugEnabeld = properties.getErrorHandler().getDebug();
 	}
 
 	@ExceptionHandler(BadCredentialsException.class)
 	public ResponseEntity<ErrorDTO> handleBadRequestAlertException(BadCredentialsException ex) {
 		final ErrorDTO error = new ErrorDTO(UNAUTHORIZED.value(), UNAUTHORIZED.getReasonPhrase());
 		
-		if(debug) {
+		if(isDebugEnabeld) {
 			error.setDebugMessage(ex.getLocalizedMessage());
 		}
 		return new ResponseEntity<>(error, UNAUTHORIZED);
@@ -38,7 +38,7 @@ public class RestErrorHandler {
 	public ResponseEntity<ErrorDTO> handleGenericException(Exception ex) {
 		final ErrorDTO error = new ErrorDTO(INTERNAL_SERVER_ERROR.value(), INTERNAL_SERVER_ERROR.getReasonPhrase());
 		
-		if(debug) {
+		if(isDebugEnabeld) {
 			error.setDebugMessage(ex.getLocalizedMessage());
 		}
 		return new ResponseEntity<>(error, INTERNAL_SERVER_ERROR);
@@ -48,7 +48,7 @@ public class RestErrorHandler {
 	public ResponseEntity<ErrorDTO> handleDuplicateKeyException(DuplicateKeyException ex) {
 		final ErrorDTO error = new ErrorDTO(BAD_REQUEST.value(), "The resource that you are trying to create already exists.");
 		
-		if(debug) {
+		if(isDebugEnabeld) {
 			error.setDebugMessage(ex.getLocalizedMessage());
 		}
 		return new ResponseEntity<>(error, BAD_REQUEST);
@@ -61,7 +61,7 @@ public class RestErrorHandler {
 		
 		ex.getFieldErrors().forEach(e -> error.addValidationError(e.getField(), e.getCode(), e.getDefaultMessage()));
 		
-		if(debug) {
+		if(isDebugEnabeld) {
 			error.setDebugMessage(ex.getLocalizedMessage());
 		}
 		return new ResponseEntity<>(error, status);
@@ -72,7 +72,7 @@ public class RestErrorHandler {
 		final HttpStatus status = ex.getStatus();
 		final ErrorDTO error = new ErrorDTO(status.value(), status.getReasonPhrase());
 		
-		if(debug) {
+		if(isDebugEnabeld) {
 			error.setDebugMessage(ex.getLocalizedMessage());
 		}
 		return new ResponseEntity<>(error, status);

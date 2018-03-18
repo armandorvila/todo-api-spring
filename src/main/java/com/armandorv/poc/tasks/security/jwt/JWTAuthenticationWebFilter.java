@@ -27,33 +27,31 @@ public class JWTAuthenticationWebFilter implements WebFilter {
 
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-		
+
 		Optional<String> jwToken = getTokenFromHeader(exchange.getRequest());
-		
-		if(!jwToken.isPresent()) {
+
+		if (!jwToken.isPresent()) {
 			return chain.filter(exchange);
 		}
-		
-		return Mono.just(jwToken.get())
-				   .publishOn(Schedulers.elastic()).flatMap(t -> {
-				
-			if(jwtAuthenticationProvider.validateToken(t)) {
-					
+
+		return Mono.just(jwToken.get()).publishOn(Schedulers.elastic()).flatMap(t -> {
+
+			if (jwtAuthenticationProvider.validateToken(t)) {
+
 				return jwtAuthenticationProvider.getAuthentication(t)
 						.map(ReactiveSecurityContextHolder::withAuthentication)
 						.flatMap(c -> chain.filter(exchange).subscriberContext(c));
-				}
-				else {
-					return chain.filter(exchange);
-				}
-			});
+			} else {
+				return chain.filter(exchange);
+			}
+		});
 	}
 
 	private Optional<String> getTokenFromHeader(ServerHttpRequest request) {
 		List<String> authorizationHeader = request.getHeaders().get(AUTHORIZATION_HEADER);
 
 		if (authorizationHeader == null || authorizationHeader.isEmpty()) {
-			return  Optional.empty();
+			return Optional.empty();
 		}
 
 		final String bearerToken = authorizationHeader.get(0);

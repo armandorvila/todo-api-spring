@@ -73,8 +73,6 @@ public class JWTAuthenticationProvider {
 			log.info("Expired JWT token.");
 		} catch (UnsupportedJwtException e) {
 			log.info("Unsupported JWT token.");
-		} catch (IllegalArgumentException e) {
-			log.info("JWT token compact of handler are invalid.");
 		}
 		return false;
 	}

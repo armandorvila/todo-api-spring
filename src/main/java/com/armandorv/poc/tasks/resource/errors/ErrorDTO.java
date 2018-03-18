@@ -35,13 +35,6 @@ public class ErrorDTO {
 		this.message = message;
 		this.timestamp = LocalDateTime.now();
 	}
-	
-	public ErrorDTO(Integer status, String message, String debugMessage) {
-		this.status = status;
-		this.message = message;
-		this.debugMessage = debugMessage;
-		this.timestamp = LocalDateTime.now();
-	}
 
 	public void addValidationError(String path, String code, String message) {
 		this.validationErrors.add(new ValidationError(path, code, message));
