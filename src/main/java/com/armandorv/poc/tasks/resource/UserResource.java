@@ -3,7 +3,6 @@ package com.armandorv.poc.tasks.resource;
 import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.armandorv.poc.tasks.domain.User;
+import com.armandorv.poc.tasks.security.SecurityContextUtils;
 import com.armandorv.poc.tasks.service.UserService;
 
 import reactor.core.publisher.Mono;
@@ -32,7 +32,6 @@ public class UserResource {
 
 	@GetMapping("/users/me")
 	public Mono<User> me() {
-		return ReactiveSecurityContextHolder.getContext().map(ctx -> ctx.getAuthentication().getName())
-				.flatMap(this.userService::getUserByEmail);
+		return SecurityContextUtils.getPrincipal().flatMap(this.userService::getUserByEmail);
 	}
 }

@@ -25,6 +25,8 @@ public class Task {
 	
 	@Id
 	private String id;
+	
+	private String userId;
 
 	@NotEmpty(message = "This field is required")
 	private String summary;
@@ -41,8 +43,19 @@ public class Task {
 		this.summary = summary;
 	}
 	
-	public Task(String id, String summary) {
-		this.id = id;
+	public Task(String userId, String summary) {
+		this.userId = userId;
 		this.summary = summary;
+	}
+	
+	public Task(String id, String userId, String summary) {
+		this.id = id;
+		this.userId = userId;
+		this.summary = summary;
+	}
+	
+	public Task withUser(User user) {
+		this.setUserId(user.getId());
+		return this;
 	}
 }
