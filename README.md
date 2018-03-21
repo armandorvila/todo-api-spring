@@ -38,9 +38,7 @@ $ docker-compose up
 | `/tasks` | GET | Lists all tasks that are currently managed. |
 | `/tasks/{itemId}` | GET  the details of a specific item. |
 
-The following sections will walk you through a simple example on how to use the API via cURL. If you have run the API with the provided docker compose, there will be a user already provisioned:
-
-```some.user@gmail.com/secret```
+The following sections will walk you through a simple example on how to use the API via cURL. If you have run the API with the provided docker compose, there will be a user already provisioned: ```some.user@gmail.com/secret```
 
 ### Registering a user
 
