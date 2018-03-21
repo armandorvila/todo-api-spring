@@ -1,7 +1,7 @@
 # TODO API Spring Framework
 Small project that implements a REST TODO API on top of Java 8, Spring Framework 5 and reactive programming. 
 
-# Feature list
+## Feature list
 
 1. As a user I should list my todo items.
 2. As a user I should be able to add a new item.
@@ -15,6 +15,18 @@ Small project that implements a REST TODO API on top of Java 8, Spring Framework
 10. As a user I should be able to assign a task to another user id.
 11. As a user I should be able to list tasks assigned to a user.
 
+## Using the API
+
+### Running
+
+The repository contains a docker compose file that runs a mongodb container, a temporary container that 
+sets up some testing data, and a container running the Spring Boot application which implements the API.
+
+```bash
+$ mvn clean install
+$ docker-compose up
+```
+
 ### Endpoints
 
 | API Endpoint | Method | Example |
@@ -26,7 +38,9 @@ Small project that implements a REST TODO API on top of Java 8, Spring Framework
 | `/tasks` | GET | Lists all tasks that are currently managed. |
 | `/tasks/{itemId}` | GET  the details of a specific item. |
 
-The following sections will walk you through a simple example on how to use the API via cURL.
+The following sections will walk you through a simple example on how to use the API via cURL. If you have run the API with the provided docker compose, there will be a user already provisioned:
+
+```some.user@gmail.com/secret```
 
 ### Registering a user
 
@@ -37,7 +51,7 @@ $ curl http://localhost:8080/users/singup -X POST -H "Content-Type: application/
 ### Authenticating
 
 ```bash
-$ curl http://localhost:8080/authenticate -X POST -H "Content-Type: application/json" -H -d '{"email":"some@email.com", "password":"somepass"}'
+$ curl http://localhost:8080/authenticate -X POST -H "Content-Type: application/json" -H -d '{"email":"some.user@gmail.com", "password":"secret"}'
 ```
 
 ### Listing tasks
