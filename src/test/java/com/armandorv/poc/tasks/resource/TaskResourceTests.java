@@ -8,12 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import com.armandorv.poc.tasks.domain.Task;
 import com.armandorv.poc.tasks.repository.TaskRepository;
 import com.armandorv.poc.tasks.resource.TaskResource;
+import com.armandorv.poc.tasks.service.TaskService;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -22,16 +24,19 @@ import reactor.core.publisher.Mono;
 @WebFluxTest(TaskResource.class)
 public class TaskResourceTests {
 
+	private Task testTask = new Task("57f4dadc6d138cf005711f4d", "57f4dadc6d138cf005711f4d", "Some task");
+	
 	@Autowired
 	private WebTestClient webClient;
 
 	@MockBean
 	private TaskRepository taskRepository;
 	
-	private Task testTask = new Task("57f4dadc6d138cf005711f4d", "Some task");
+	@MockBean
+	private TaskService taskService;
 	
 	@Test
-	public void should_GetAllTasks_When_NotSpecifiedPagination() throws Exception {		
+	public void should_GetAllTasks_When_NotSpecifiedPagination() {		
 		given(taskRepository.findAll())
 		  .willReturn(Flux.just(testTask));
 		
@@ -46,7 +51,7 @@ public class TaskResourceTests {
 	}
 	
 	@Test
-	public void should_GetTask_When_GivenExistentId() throws Exception {
+	public void should_GetTask_When_GivenExistentId() {
 		given(taskRepository.findById(testTask.getId()))
 		  .willReturn(Mono.just(testTask));
 		
@@ -60,7 +65,7 @@ public class TaskResourceTests {
 	}
 
 	@Test
-	public void should_GetNotFound_When_GivenNonExistentId() throws Exception {
+	public void should_GetNotFound_When_GivenNonExistentId() {
 		given(taskRepository.findById("someid"))
 		  .willReturn(Mono.empty());
 		
@@ -70,5 +75,31 @@ public class TaskResourceTests {
 					.expectStatus().isNotFound()
 					.expectBody()
 					.isEmpty();
+	}
+	
+	@Test
+	@WithMockUser(username = "user.some@gmail.com")
+	public void should_Create_Task_When_GivenValidTask() {
+		given(taskService.createTask("user.some@gmail.com", testTask))
+		  .willReturn(Mono.just(testTask));
+		
+		webClient.post().uri("/tasks")
+			.accept(MediaType.APPLICATION_JSON)
+			.syncBody(testTask)
+			.exchange()
+			.expectStatus().isCreated()
+			.expectBody()
+			.jsonPath("$.id").isNotEmpty()
+			.jsonPath("$.userId").isNotEmpty()
+			.jsonPath("$.summary").isNotEmpty();
+	}
+	
+	@Test
+	public void should_GetBadRequest_When_GivenEmptySummary() {
+		webClient.post().uri("/tasks")
+		.accept(MediaType.APPLICATION_JSON)
+		.syncBody(new Task(""))
+		.exchange()
+		.expectStatus().isBadRequest();
 	}
 }

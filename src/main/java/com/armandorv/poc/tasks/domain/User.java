@@ -64,7 +64,7 @@ public class User {
 		this.lastName = lastName;
 		this.password = password;
 	}
-	
+
 	public User withPassword(String password) {
 		this.setPassword(password);
 		return this;
