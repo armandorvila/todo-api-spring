@@ -23,13 +23,13 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(exclude = {"createdAt", "lastModifiedAt"})
+@EqualsAndHashCode(exclude = { "createdAt", "lastModifiedAt" })
 @Document(collection = "users")
 public class User {
 
 	@Id
 	private String id;
-	
+
 	@Email
 	@Indexed(unique = true)
 	private String email;
@@ -39,7 +39,7 @@ public class User {
 
 	@NotEmpty(message = "This field is required")
 	private String lastName;
-	
+
 	@JsonInclude(Include.NON_NULL)
 	@NotEmpty(message = "This field is required")
 	private String password;
@@ -57,13 +57,21 @@ public class User {
 		this.firstName = firstName;
 		this.lastName = lastName;
 	}
-	
+
 	public User(String email, String firstName, String lastName, String password) {
 		this.email = email;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.password = password;
 	}
+	
+	public User withPassword(String password) {
+		this.setPassword(password);
+		return this;
+	}
+
+	public User withoutPassword() {
+		this.setPassword(null);
+		return this;
+	}
 }
-
-

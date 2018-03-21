@@ -24,7 +24,6 @@ import reactor.core.publisher.Mono;
 @AutoConfigureWebTestClient
 public class UserTokenResourceTests {
 
-
 	@Autowired
 	private WebTestClient webClient;
 
