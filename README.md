@@ -17,7 +17,7 @@ Small project that implements a REST TODO API on top of Java 8, Spring Framework
 
 ## Using the API
 
-### Running
+### Running the API
 
 The repository contains a docker compose file that runs a mongodb container, a temporary container that 
 sets up some testing data, and a container running the Spring Boot application which implements the API.
@@ -64,5 +64,5 @@ $ curl http://localhost:8080/tasks -X GET -H "Authorization: Bearer someToken"
 $ curl http://localhost:8080/tasks -X POST -H "Content-Type: application/json" -H "Authorization: Bearer someToken" -d '{"summary":"Some task"}'
 ```
 
-# Build
+## Build
 [![Build Status](https://secure.travis-ci.org/armandorvila/todo-api-spring.png)](http://travis-ci.org/armandorvila/todo-api-spring)  [![codecov.io](https://codecov.io/github/armandorvila/todo-api-spring/coverage.svg)](https://codecov.io/github/armandorvila/todo-api-spring) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/62c434b415f444e48bbed29f83b57a1f)](https://www.codacy.com/app/armandorvila/todo-api-spring?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=armandorvila/todo-api-spring&amp;utm_campaign=Badge_Grade)
