@@ -1,8 +1,8 @@
 package com.armandorv.poc.tasks.resource.errors;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.server.ServerWebInputException;
 
 import com.armandorv.poc.tasks.config.ApplicationProperties;
-import org.springframework.dao.DuplicateKeyException;
+import com.armandorv.poc.tasks.exception.UserAlreadyExistsException;
 
 @ControllerAdvice
 public class RestErrorHandler {
@@ -42,10 +42,10 @@ public class RestErrorHandler {
 		return new ResponseEntity<>(error, INTERNAL_SERVER_ERROR);
 	}
 
-	@ExceptionHandler(DuplicateKeyException.class)
-	public ResponseEntity<ErrorDTO> handleDuplicateKeyException(DuplicateKeyException ex) {
+	@ExceptionHandler(UserAlreadyExistsException.class)
+	public ResponseEntity<ErrorDTO> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
 		final ErrorDTO error = new ErrorDTO(BAD_REQUEST.value(),
-				"The resource that you are trying to create already exists.");
+				"There is already a user in the system with the given email.");
 
 		this.addDeugMessage(ex, error);
 
