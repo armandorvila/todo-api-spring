@@ -12,9 +12,8 @@ Small project that implements a REST TODO API on top of JAva 8 and Spring Framew
 7. As a user I should be able to sort my todo list by due date.
 8. As a user I should be able to sort my todo list by priority.
 9. As a user I should be able to set an item as completed (and list completed items).
-10. As a user I should be able to authenticate using my github account.
-10. As a user I should be able to assign a task to another user using github id.
-11. As a user I should be able to list tasks assigned to a github user
+10. As a user I should be able to assign a task to another user id.
+11. As a user I should be able to list tasks assigned to a user.
 
 # Build
 [![Build Status](https://secure.travis-ci.org/armandorvila/todo-api-spring.png)](http://travis-ci.org/armandorvila/todo-api-spring)  [![codecov.io](https://codecov.io/github/armandorvila/todo-api-spring/coverage.svg)](https://codecov.io/github/armandorvila/todo-api-spring) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/62c434b415f444e48bbed29f83b57a1f)](https://www.codacy.com/app/armandorvila/todo-api-spring?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=armandorvila/todo-api-spring&amp;utm_campaign=Badge_Grade)
